@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"time"
+
+	"github.com/Snowflake-Labs/terraform-provider-snowflake/pkg/sdk/snowflakesql"
 )
 
 var (
@@ -60,32 +62,32 @@ type User struct {
 	HasRsaPublicKey       bool
 }
 type userDBRow struct {
-	Name                  string         `db:"name"`
-	CreatedOn             time.Time      `db:"created_on"`
-	LoginName             string         `db:"login_name"`
-	DisplayName           sql.NullString `db:"display_name"`
-	FirstName             sql.NullString `db:"first_name"`
-	LastName              sql.NullString `db:"last_name"`
-	Email                 sql.NullString `db:"email"`
-	MinsToUnlock          sql.NullString `db:"mins_to_unlock"`
-	DaysToExpiry          sql.NullString `db:"days_to_expiry"`
-	Comment               sql.NullString `db:"comment"`
-	Disabled              bool           `db:"disabled"`
-	MustChangePassword    bool           `db:"must_change_password"`
-	SnowflakeLock         bool           `db:"snowflake_lock"`
-	DefaultWarehouse      sql.NullString `db:"default_warehouse"`
-	DefaultNamespace      string         `db:"default_namespace"`
-	DefaultRole           string         `db:"default_role"`
-	DefaultSecondaryRoles string         `db:"default_secondary_roles"`
-	ExtAuthnDuo           bool           `db:"ext_authn_duo"`
-	ExtAuthnUid           string         `db:"ext_authn_uid"`
-	MinsToBypassMfa       string         `db:"mins_to_bypass_mfa"`
-	Owner                 string         `db:"owner"`
-	LastSuccessLogin      sql.NullTime   `db:"last_success_login"`
-	ExpiresAtTime         sql.NullTime   `db:"expires_at_time"`
-	LockedUntilTime       sql.NullTime   `db:"locked_until_time"`
-	HasPassword           bool           `db:"has_password"`
-	HasRsaPublicKey       bool           `db:"has_rsa_public_key"`
+	Name                  string            `db:"name"`
+	CreatedOn             time.Time         `db:"created_on"`
+	LoginName             string            `db:"login_name"`
+	DisplayName           sql.NullString    `db:"display_name"`
+	FirstName             sql.NullString    `db:"first_name"`
+	LastName              sql.NullString    `db:"last_name"`
+	Email                 sql.NullString    `db:"email"`
+	MinsToUnlock          sql.NullString    `db:"mins_to_unlock"`
+	DaysToExpiry          sql.NullString    `db:"days_to_expiry"`
+	Comment               sql.NullString    `db:"comment"`
+	Disabled              snowflakesql.Bool `db:"disabled"`
+	MustChangePassword    snowflakesql.Bool `db:"must_change_password"`
+	SnowflakeLock         snowflakesql.Bool `db:"snowflake_lock"`
+	DefaultWarehouse      sql.NullString    `db:"default_warehouse"`
+	DefaultNamespace      string            `db:"default_namespace"`
+	DefaultRole           string            `db:"default_role"`
+	DefaultSecondaryRoles string            `db:"default_secondary_roles"`
+	ExtAuthnDuo           snowflakesql.Bool `db:"ext_authn_duo"`
+	ExtAuthnUid           string            `db:"ext_authn_uid"`
+	MinsToBypassMfa       string            `db:"mins_to_bypass_mfa"`
+	Owner                 string            `db:"owner"`
+	LastSuccessLogin      sql.NullTime      `db:"last_success_login"`
+	ExpiresAtTime         sql.NullTime      `db:"expires_at_time"`
+	LockedUntilTime       sql.NullTime      `db:"locked_until_time"`
+	HasPassword           snowflakesql.Bool `db:"has_password"`
+	HasRsaPublicKey       snowflakesql.Bool `db:"has_rsa_public_key"`
 }
 
 func (row userDBRow) convert() *User {
@@ -93,18 +95,18 @@ func (row userDBRow) convert() *User {
 		Name:                  row.Name,
 		CreatedOn:             row.CreatedOn,
 		LoginName:             row.LoginName,
-		Disabled:              row.Disabled,
-		MustChangePassword:    row.MustChangePassword,
-		SnowflakeLock:         row.SnowflakeLock,
+		Disabled:              row.Disabled.BoolValue(),
+		MustChangePassword:    row.MustChangePassword.BoolValue(),
+		SnowflakeLock:         row.SnowflakeLock.BoolValue(),
 		DefaultNamespace:      row.DefaultNamespace,
 		DefaultRole:           row.DefaultRole,
 		DefaultSecondaryRoles: row.DefaultSecondaryRoles,
-		ExtAuthnDuo:           row.ExtAuthnDuo,
+		ExtAuthnDuo:           row.ExtAuthnDuo.BoolValue(),
 		ExtAuthnUid:           row.ExtAuthnUid,
 		MinsToBypassMfa:       row.MinsToBypassMfa,
 		Owner:                 row.Owner,
-		HasPassword:           row.HasPassword,
-		HasRsaPublicKey:       row.HasRsaPublicKey,
+		HasPassword:           row.HasPassword.BoolValue(),
+		HasRsaPublicKey:       row.HasRsaPublicKey.BoolValue(),
 	}
 	if row.DisplayName.Valid {
 		user.DisplayName = row.DisplayName.String
