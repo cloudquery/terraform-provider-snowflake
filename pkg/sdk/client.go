@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"slices"
@@ -113,6 +114,7 @@ func NewDryRunClient() *Client {
 }
 
 func NewClient(cfg *gosnowflake.Config) (*Client, error) {
+	log.SetOutput(io.Discard)
 	var err error
 	if cfg == nil {
 		log.Printf("[DEBUG] Searching for default config in credentials chain...\n")
